@@ -11,4 +11,48 @@ async function handleGenerateNewShortURL(req,res){
     })
     return res.json({id:shortID}) 
 }
-export { handleGenerateNewShortURL }
+
+async function handleGetAnalytics(req,res){
+    const shortId=req.params.shortId;
+    const result = await URL.findOne({
+        shortId
+    });
+    return res.json({ 
+        totalClicks:result.visitHistory.length,
+        analytics:result.visitHistory,
+    });
+}
+
+async function handleGetShortSite(req,res){
+    const shortId = req.params.shortId;
+
+    // Find URL from DB
+    // Model.findOneAndUpdate(
+    //     <filter>,          // Criteria to find the document
+    //         <update>,         // How to modify the document
+    //             <options>         // Additional settings (optional)
+    // )
+    const entry = await URL.findOneAndUpdate(
+        { shortId },
+        {
+            $push: {
+                visitHistory: {
+                    timestamp: Date.now()
+                },
+            },
+        },
+        { new: true }
+    );
+
+    if (!entry) {
+        return res.status(404).send("URL not found");
+    }
+
+    // Redirect
+    res.redirect(entry.requiredURL); // Make sure 'requiredURL' is the correct field name
+}
+
+export { handleGenerateNewShortURL,
+    handleGetAnalytics,
+    handleGetShortSite
+ }

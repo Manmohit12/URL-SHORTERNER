@@ -14,7 +14,7 @@ const urlSchema=new mongoose.Schema({
     visitHistory:[{
         timestamp: {
             type: Date,
-            default: Date.now
+            default: Date.now()
         }
     }]
 
