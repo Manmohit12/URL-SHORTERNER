@@ -8,4 +8,3 @@ router.get('/analytics/:shortId', handleGetAnalytics)
 
 router.get('/:shortId',handleGetShortSite)
 export { router }
-          
